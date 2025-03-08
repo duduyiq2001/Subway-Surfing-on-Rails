@@ -39,7 +39,7 @@ def main():
 
     # Clock
     clock = pygame.time.Clock()
-    fps = 60
+    fps = 120
 
     # Game Loop
     try:

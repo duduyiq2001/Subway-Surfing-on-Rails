@@ -9,6 +9,34 @@ Defines the Player class, which handles:
 
 import pygame
 
+# SMOOTH1 = [5, 10, 15, 20, 20, 15, 10, 5]
+# SMOOTH2 = [3, 9, 16, 22, 22, 16, 9, 3]
+# SMOOTH3 = [1, 8, 17, 24, 24, 17, 8, 1]
+
+# Accelerating increase
+SMOOTH1 = [
+    0.0,
+    0.01111111111111111,
+    0.02222222222222222,
+    0.03333333333333333,
+    0.04444444444444444,
+    0.05555555555555556,
+    0.06666666666666667,
+    0.07777777777777777,
+    0.08888888888888888,
+    0.1,
+    0.1,
+    0.08888888888888888,
+    0.07777777777777777,
+    0.06666666666666667,
+    0.05555555555555556,
+    0.04444444444444444,
+    0.03333333333333333,
+    0.02222222222222222,
+    0.01111111111111111,
+    0.0,
+]
+
 
 class Player:
     """
@@ -70,6 +98,7 @@ class Player:
 
         # smooth movement
         self.x_per_frame = []
+        self.x_smooth_dist = 0
 
     def move_left(self):
         """
@@ -79,15 +108,9 @@ class Player:
             self.current_lane -= 1
             # self.x = self.lane_positions[self.current_lane]
             self.x_per_frame = [
-                -5,
-                -10,
-                -15,
-                -20,
-                -20,
-                -15,
-                -10,
-                -5,
-            ]  # maxhight = 10 + 2*delta
+                -x for x in SMOOTH1.copy()
+            ]  # reverse the list and multiply by -1
+            self.x_smooth_dist = self.x - self.lane_positions[self.current_lane]
 
     def move_right(self):
         """
@@ -96,7 +119,8 @@ class Player:
         if self.current_lane < len(self.lane_positions) - 1:
             self.current_lane += 1
             # self.x = self.lane_positions[self.current_lane]
-            self.x_per_frame = [5, 10, 15, 20, 20, 15, 10, 5]  # maxhight = 10 + 2*delta
+            self.x_per_frame = SMOOTH1.copy()
+            self.x_smooth_dist = self.lane_positions[self.current_lane] - self.x
 
     def jump(self):
         """
@@ -115,11 +139,7 @@ class Player:
 
         # smooth movement
         if len(self.x_per_frame) > 0:
-            self.x += (
-                0.01
-                * self.x_per_frame[-1]
-                * (self.lane_positions[1] - self.lane_positions[0])
-            )
+            self.x += self.x_per_frame[-1] * self.x_smooth_dist
             self.x_per_frame.pop()
         else:
             self.x_per_frame = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -152,7 +172,9 @@ class Player:
         Returns the player's current collision rectangle.
         Useful for collision checks with obstacles or coins.
         """
-        return pygame.Rect(self.x, self.y, self.width, self.height)
+        return pygame.Rect(
+            self.x - self.width / 2, self.y - self.height / 2, self.width, self.height
+        )
 
     def draw(self, surface):
         """
@@ -165,4 +187,26 @@ class Player:
         # surface.blit(self.image, (self.x, self.y))
 
         # Using a rectangle placeholder:
-        pygame.draw.rect(surface, self.color, (self.x, self.y, self.width, self.height))
+        pygame.draw.rect(
+            surface,
+            self.color,
+            (
+                self.x - self.width / 2,
+                self.y - self.height / 2,
+                self.width,
+                self.height,
+            ),
+        )
+
+        # draw collision box
+        pygame.draw.rect(
+            surface,
+            (0, 255, 0),
+            (
+                self.x - self.width / 2,
+                self.y - self.height / 2,
+                self.width,
+                self.height,
+            ),
+            1,
+        )
