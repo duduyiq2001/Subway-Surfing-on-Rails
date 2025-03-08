@@ -4,7 +4,7 @@ from mediapipe.tasks.python import vision
 import cv2
 
 # STEP 2: Create an GestureRecognizer object.
-base_options = python.BaseOptions(model_asset_path='gesture_recognizer.task')
+base_options = python.BaseOptions(model_asset_path="gesture_recognizer.task")
 options = vision.GestureRecognizerOptions(base_options=base_options)
 recognizer = vision.GestureRecognizer.create_from_options(options)
 
@@ -34,13 +34,13 @@ while True:
             # cv2.putText(frame, f'{name} ({score:.2f})', (50, 50),
             #             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
             # logging
-            print(f'gesture detected {name} with score: {score}')
+            print(f"gesture detected {name} with score: {score}")
 
     # # Display the frame
     # cv2.imshow("Gesture Recognition", frame)
 
     # Press 'q' to exit
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
 # Release resources
