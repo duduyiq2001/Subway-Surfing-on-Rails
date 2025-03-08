@@ -10,7 +10,7 @@ import pygame
 import sys
 from game_loop import game_loop
 from hand_gestures.model import run_model_on_cam
-from helpers import create_gesture_update
+from helpers import create_gesture_update, keyboard_update
 import threading
 from queue import Queue
 
@@ -21,7 +21,7 @@ def main():
     # Initialize Pygame
     pygame.init()
     # Initialize Queue
-    gesture_queue = Queue()
+    gesture_queue = Queue(maxsize=1)
     logfile = "log.txt"
     # . launch thread for webcam
     threading.Thread(
