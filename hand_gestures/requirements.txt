@@ -8,3 +8,4 @@ pip >=20.3
 mediapipe
 opencv-python 
 numpy
+pygame
