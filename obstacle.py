@@ -19,13 +19,7 @@ class Obstacle:
         
         # random choose a type
         self.type = random.choice(["hurdle", "train"])
-        
-        if self.type == "train":
-            # train size is different
-            self.height = 200
-        else:
-            self.height = height
-        
+        self.height = height
         self.width = width
 
     def update(self, dt):
