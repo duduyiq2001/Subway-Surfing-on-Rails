@@ -5,6 +5,7 @@ Rails.application.configure do
 
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true
+  config.action_cable.allowed_request_origins = ['http://127.0.0.1:3000', 'http://localhost:3000', 'ws://127.0.0.1:3000/cable']
 
   # Do not eager load code on boot.
   config.eager_load = false

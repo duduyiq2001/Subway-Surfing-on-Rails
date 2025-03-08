@@ -124,6 +124,7 @@ class Player:
             self.x_per_frame = SMOOTH1.copy()
             self.x_smooth_dist = self.lane_positions[self.current_lane] - self.x
 
+
     # def jump(self):
     #     """
     #     Make the player jump.
@@ -142,6 +143,7 @@ class Player:
         # smooth movement
         if len(self.x_per_frame) > 0:
             self.x += self.x_per_frame[-1] * self.x_smooth_dist
+
             self.world_x = self.x
             self.x_per_frame.pop()
         else:

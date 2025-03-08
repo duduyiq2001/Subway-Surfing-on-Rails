@@ -6,6 +6,7 @@ class Obstacle:
     Represents an obstacle that moves down the screen.
     """
 
+
     def __init__(self, track_index, y, track_position, width=100, height=30):
         """
         Initializes an obstacle in a random track.
@@ -16,6 +17,7 @@ class Obstacle:
         self.y = -height
         self.world_x = self.x
         self.world_y = y
+
         
         # random choose a type
         self.type = random.choice(["hurdle", "train"])

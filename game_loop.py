@@ -33,6 +33,7 @@ def game_loop(screen, clock, fps, update_func):
     prev_time = time.time()
 
     # Initialize obstacles
+
     #obstacle_manager = ObstacleManager(player.lane_positions)
 
     # Initialize font
@@ -72,6 +73,7 @@ def game_loop(screen, clock, fps, update_func):
 
         
         # Update obstacles
+
         #obstacle_manager.update(dt)
         
         # Check for collisions
@@ -82,6 +84,7 @@ def game_loop(screen, clock, fps, update_func):
 
         # Draw obstacles
         #obstacle_manager.draw(screen)
+
 
         # Calculate and display FPS
         fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
