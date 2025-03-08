@@ -18,9 +18,18 @@ class Obstacle:
         self.track_positions = track_positions
         self.track = random.randint(0, len(track_positions) - 1)  # Choose a random track
         self.x = track_positions[self.track] - width // 2
-        self.y = -height  # Start above the screen
+        
+        # random choose a type
+        self.type = random.choice(["hurdle", "train"])
+        
+        if self.type == "train":
+            # train size is different
+            self.height = 200
+        else:
+            self.height = height
+        
         self.width = width
-        self.height = height
+        self.y = -height  # Start above the screen
         self.speed = speed  # Speed at which the obstacle moves
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 

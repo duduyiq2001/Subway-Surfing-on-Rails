@@ -66,7 +66,8 @@ def game_loop(screen, clock, fps, update_func):
         # Obstacle spawning
         obstacle_spawn_time += dt
         if obstacle_spawn_time > 1.5:  # Spawn every second
-            obstacles.append(Obstacle(player.lane_positions))
+            # Randomly generate one of the two types of obstacles
+            obstacles.append(Obstacle(track_positions=player.lane_positions))
             obstacle_spawn_time = 0
 
         for obstacle in obstacles:
