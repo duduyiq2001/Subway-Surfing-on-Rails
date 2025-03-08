@@ -13,20 +13,14 @@ class MapGenerator:
         self.track_width = (screen.get_width()- 2 * SIDE_WIDTH) // (TRACK_COUNT)
 
         # Deal with the track image    
-        track_bg = pygame.image.load("./resources/image/track.jpeg")
-        TRACK_X = track_bg.get_width() // 2 - 25
-        TRACK_Y = 0
-        TRACK_WIDTH = 50
-        TRACK_HEIGHT = track_bg.get_height()
-        self.track_image = track_bg.subsurface(pygame.Rect(TRACK_X, TRACK_Y, TRACK_WIDTH, TRACK_HEIGHT))
-
-
+        track_bg = pygame.image.load("./resources/image/track.png")
+        self.track_image = pygame.transform.scale(track_bg, (self.track_width, screen.get_height()))
     
     def draw_map(self, screen):
         screen.fill("gray")        
         
         # Draw the tarck lines    
-        for i in range(1, TRACK_COUNT):
+        for i in range(0, TRACK_COUNT):
             x_pos = SIDE_WIDTH + i * self.track_width
             pygame.draw.line(screen, "black", (x_pos, 0), (x_pos, screen.get_height()), 3)
             screen.blit(self.track_image, (x_pos, 0))
