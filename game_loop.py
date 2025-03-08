@@ -30,10 +30,14 @@ def game_loop(screen, clock, fps, update_func):
         ],
     )
     prev_time = time.time()
-    
+
     # Initialize obstacles
     obstacles = []
     obstacle_spawn_time = 0
+
+    # Initialize font
+    pygame.font.init()
+    font = pygame.font.SysFont(None, 36)
 
     # Main loop
     running = True
@@ -56,13 +60,16 @@ def game_loop(screen, clock, fps, update_func):
 
         # Draw player
         player.draw(screen)
-              
+        # player.update()
+
+        player.update()
+
         # Handle player movement
         # print(time.time() - prev_time)
         if time.time() - prev_time > MOVE_COOLDOWN:
             update_func(player)
             prev_time = time.time()
-            
+
         # Obstacle spawning
         obstacle_spawn_time += dt
         if obstacle_spawn_time > 1.5:  # Spawn every second
@@ -80,11 +87,15 @@ def game_loop(screen, clock, fps, update_func):
 
         # Remove off-screen obstacles
         obstacles = [ob for ob in obstacles if ob.y < HEIGHT]
-        
+
         # Draw obstacles
         for obstacle in obstacles:
             obstacle.draw(screen)
-        
+
+        # Calculate and display FPS
+        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
+        screen.blit(fps_text, (10, 10))
+
         # Update display
         pygame.display.flip()
 
