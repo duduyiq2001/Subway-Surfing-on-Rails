@@ -9,20 +9,35 @@
 import pygame
 import sys
 from map_generator import draw_map
+from player import Player
 
-# Initialize Pygame
-pygame.init()
 
-# Constants
-WIDTH, HEIGHT = 1280, 720
+def main():
+    # Initialize Pygame
+    pygame.init()
 
-# Screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    # Constants
+    WIDTH, HEIGHT = 1280, 720
 
-# Game loop
-while True:
-    draw_map(screen)
-    pygame.display.flip()
-
-# quit game
-pygame.quit()
+    # Screen
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Subway Surfing on Rails")
+    
+    # Clock
+    clock = pygame.time.Clock()
+    fps = 60
+    
+    # Game Loop
+    try:
+        game_loop(screen, clock, fps)
+    except Exception as e:
+        print("Error in the game loop: ", e)
+        pygame.quit()
+        sys.exit()
+        
+    # exit
+    pygame.quit()
+    sys.exit()
+    
+if __name__ == "__main__":
+    main()
