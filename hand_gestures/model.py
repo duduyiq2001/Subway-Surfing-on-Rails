@@ -4,12 +4,15 @@ from mediapipe.tasks.python import vision
 from queue import Queue
 import cv2
 
+
 # STEP 2: Create an GestureRecognizer object.
 def get_model():
     base_options = python.BaseOptions(model_asset_path="gesture_recognizer.task")
     options = vision.GestureRecognizerOptions(base_options=base_options)
     recognizer = vision.GestureRecognizer.create_from_options(options)
     return recognizer
+
+
 # implemented as a generator running on another thread
 def run_model_on_cam(queue, logfile):
     print("wefbewjfbewjkfnbwekfenfkewnfkewnfknfewkf")
@@ -21,7 +24,7 @@ def run_model_on_cam(queue, logfile):
     ## fetch model
     recognizer = get_model()
     try:
-        with open(logfile, 'a') as f:
+        with open(logfile, "a") as f:
             f.write("run_model_on_cam started")
             while True:
                 ret, frame = cam.read()
@@ -45,17 +48,20 @@ def run_model_on_cam(queue, logfile):
                         # logging
                         log_entry = f" Gesture detected: {name}, Score: {score}"
                         print(f" Gesture detected: {name}, Score: {score}")
-                    
+
                         f.write(log_entry)
                         ## put gesture into queue
+                        if queue.full():
+                            _ = queue.get()
                         queue.put((name, score))
     except Exception as e:
         print(f"Error in run_model_on_cam: {e}")
-
 
     finally:
         # Release resources
         cam.release()
     # cv2.destroyAllWindows()
+
+
 # queue = Queue()
 # run_model_on_cam(queue,"a.txt")
