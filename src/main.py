@@ -10,6 +10,7 @@ import pygame
 import sys
 from map_generator import draw_map
 from player import Player
+from game_loop import game_loop
 
 
 def main():
