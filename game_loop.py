@@ -62,11 +62,6 @@ def game_loop(screen, clock, fps, update_func):
         if time.time() - prev_time > MOVE_COOLDOWN:
             update_func(player)
             prev_time = time.time()
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            player.move_left()
-        if keys[pygame.K_d]:
-            player.move_right()
             
         # Obstacle spawning
         obstacle_spawn_time += dt
