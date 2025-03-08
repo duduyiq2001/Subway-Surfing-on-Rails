@@ -1,2 +1,4 @@
 *.task
 __pycache__
+a.txt
+log.txt
