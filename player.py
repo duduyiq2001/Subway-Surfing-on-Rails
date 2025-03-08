@@ -48,7 +48,7 @@ class Player:
         width (int): The width of the player's rectangle for collision.
         height (int): The height of the player's rectangle for collision.
         velocity_x (int): Horizontal speed.
-        velocity_y (int): Vertical speed, important for jumping.
+        velocity_y (int): Vertical speed.
         score (int): The player's current score.
         on_ground (bool): True if the player is on the ground and can jump again.
         lane_positions (list): Possible x-coordinates or lanes if you want multi-lane movement.
@@ -67,12 +67,14 @@ class Player:
         """
         self.x = x
         self.y = y
+        self.world_x = x
+        self.world_y = y
         self.width = width
         self.height = height
 
         # Movement and physics
         self.velocity_x = 0
-        self.velocity_y = 0
+        self.velocity_y = 200
         self.gravity = 0.5  # Gravity for jump logic
         self.jump_strength = (
             -10
@@ -122,14 +124,14 @@ class Player:
             self.x_per_frame = SMOOTH1.copy()
             self.x_smooth_dist = self.lane_positions[self.current_lane] - self.x
 
-    def jump(self):
-        """
-        Make the player jump.
-        Only works if the player is on the ground (on_ground == True).
-        """
-        if self.on_ground:
-            self.velocity_y = self.jump_strength
-            self.on_ground = False
+    # def jump(self):
+    #     """
+    #     Make the player jump.
+    #     Only works if the player is on the ground (on_ground == True).
+    #     """
+    #     if self.on_ground:
+    #         self.velocity_y = self.jump_strength
+    #         self.on_ground = False
 
     def update(self):
         """
@@ -140,24 +142,22 @@ class Player:
         # smooth movement
         if len(self.x_per_frame) > 0:
             self.x += self.x_per_frame[-1] * self.x_smooth_dist
+            self.world_x = self.x
             self.x_per_frame.pop()
         else:
             self.x_per_frame = [0, 0, 0, 0, 0, 0, 0, 0]
 
-        # Apply gravity
-        self.velocity_y += self.gravity
-
         # Update y-position
-        self.y += self.velocity_y
-
-        # Check if we've hit the 'ground'.
-        # For a 2D runner, you might have a fixed ground level (e.g., y=500).
-        # Adjust based on your game window size.
-        ground_level = 500
-        if self.y + self.height > ground_level:
-            self.y = ground_level - self.height
-            self.velocity_y = 0
-            self.on_ground = True
+        self.world_y += self.velocity_y
+        
+        # # Check if we've hit the 'ground'.
+        # # For a 2D runner, you might have a fixed ground level (e.g., y=500).
+        # # Adjust based on your game window size.
+        # ground_level = 500
+        # if self.y + self.height > ground_level:
+        #     self.y = ground_level - self.height
+        #     self.velocity_y = 0
+        #     self.on_ground = True
 
     def increase_score(self, amount=1):
         """
