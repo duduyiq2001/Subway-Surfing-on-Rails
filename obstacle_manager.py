@@ -10,7 +10,7 @@ class ObstacleManager:
         self.track_positions = track_positions
         self.tracks = len(track_positions)
         self .obstacles = []
-        self.spawn_timers = [random.uniform(1, 3) for _ in range(self.tracks)]
+        self.spawn_timers = [random.uniform(1, 5) for _ in range(self.tracks)]
         
     def update(self, dt):
         """
@@ -29,9 +29,10 @@ class ObstacleManager:
             self.spawn_timers[i] -= dt
             if self.spawn_timers[i] <= 0:
                 if self._all_tracks_blocked():
+                    self.spawn_timers[i] = random.uniform(1, 5)
                     continue
                 self.obstacles.append(Obstacle(i, self.track_positions))
-                self.spawn_timers[i] = random.uniform(1, 3)
+                self.spawn_timers[i] = random.uniform(1, 5)
                     
     def draw(self, screen):
         """

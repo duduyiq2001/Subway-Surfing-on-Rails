@@ -29,7 +29,7 @@ class Obstacle:
             self.height = height
         
         self.width = width
-        self.y = -height  # Start above the screen
+        self.y = -height * 2 # Start above the screen
         self.speed = speed  # Speed at which the obstacle moves
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
