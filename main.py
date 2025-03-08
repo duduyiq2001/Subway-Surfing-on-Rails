@@ -8,14 +8,26 @@
 
 import pygame
 import sys
-from map_generator import draw_map
-from player import Player
 from game_loop import game_loop
-
+from hand_gestures.model import run_model_on_cam
+from helpers import create_gesture_update
+import threading
+from queue import Queue
+mapping = {"Thumb_Up":"left", "Open_Palm":"right"}
 
 def main():
     # Initialize Pygame
     pygame.init()
+    # Initialize Queue
+    gesture_queue = Queue()
+    logfile = "log.txt"
+    #. launch thread for webcam
+    threading.Thread(target=run_model_on_cam, args=(gesture_queue,logfile), daemon=True).start()
+    ### creating callback function
+    gest_update = create_gesture_update(gesture_queue, mapping)
+
+
+
 
     # Constants
     WIDTH, HEIGHT = 1280, 720
@@ -30,7 +42,7 @@ def main():
     
     # Game Loop
     try:
-        game_loop(screen, clock, fps)
+        game_loop(screen, clock, fps, gest_update)
     except Exception as e:
         print("Error in the game loop: ", e)
         pygame.quit()

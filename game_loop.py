@@ -7,7 +7,7 @@ from player import Player
 # obstacle
 # collison
 
-def game_loop(screen, clock, fps):
+def game_loop(screen, clock, fps, update_func):
     # Constants
     WIDTH, HEIGHT = 1280, 720
     TRACK_COUNT = 5
@@ -40,12 +40,8 @@ def game_loop(screen, clock, fps):
         player.draw(screen)
 
         # Handle player movement
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            player.move_left()
-        if keys[pygame.K_d]:
-            player.move_right()
-
+        update_func(player)
+     
         # Update display
         pygame.display.flip()
 
