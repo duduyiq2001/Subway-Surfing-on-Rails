@@ -74,7 +74,7 @@ class Player:
 
         # Movement and physics
         self.velocity_x = 0
-        self.velocity_y = 200
+        self.velocity_y = 5
         self.gravity = 0.5  # Gravity for jump logic
         self.jump_strength = (
             -10

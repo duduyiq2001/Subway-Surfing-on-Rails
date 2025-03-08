@@ -2,12 +2,13 @@
 import pygame
 import sys
 import time
-
+import random
 from map_generator import draw_map
 from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
 # collison
+
 
 
 def game_loop(screen, clock, fps, update_func):
@@ -17,6 +18,11 @@ def game_loop(screen, clock, fps, update_func):
     SIDE_WIDTH = 220
     TRACK_WIDTH = (WIDTH - 2 * SIDE_WIDTH) // TRACK_COUNT
     MOVE_COOLDOWN = 0.5
+    SEG_LENGTH = 7200
+    GAME_LENGTH = 72000
+    # NUM OF objects per type
+    OBJ_NUM = 10
+    LANE_POS = [SIDE_WIDTH + (i + 0.5) * TRACK_WIDTH for i in range(TRACK_COUNT)]
 
     # First player
     player_x = SIDE_WIDTH + 2.5 * TRACK_WIDTH
@@ -26,25 +32,32 @@ def game_loop(screen, clock, fps, update_func):
     player = Player(
         x=player_x,
         y=player_y,
-        lane_positions=[
-            SIDE_WIDTH + (i + 0.5) * TRACK_WIDTH for i in range(TRACK_COUNT)
-        ],
+        lane_positions=
+            LANE_POS
     )
     prev_time = time.time()
 
     # Initialize obstacles
+    objs = []
+    
+    interval = SEG_LENGTH/OBJ_NUM
+    # 90 + i*5, 25 + i
+    for i in range(OBJ_NUM):
+        objs.append(Obstacle(i%TRACK_COUNT, i*interval, LANE_POS, "hurdle",SEG_LENGTH, 90 + i*5, 80 + i*5))
 
-    #obstacle_manager = ObstacleManager(player.lane_positions)
+    print("swdwjqdbwqd")
+
+    obstacle_manager = ObstacleManager(LANE_POS, SEG_LENGTH,objs)
 
     # Initialize font
     pygame.font.init()
     font = pygame.font.SysFont(None, 36)
 
-    # Main loop
-    running = True
-    while running:
+    
+    while player.world_y <= GAME_LENGTH:
         dt = clock.tick(fps) / 1000
-        # Handle events
+
+        ####### Handle events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -56,14 +69,25 @@ def game_loop(screen, clock, fps, update_func):
                 elif event.key == pygame.K_d:
                     player.move_right()
 
+
+        #### rendering
         # Draw map
         draw_map(screen)
 
         # Draw player
         player.draw(screen)
+
+        # Draw other players
+
+        # Draw obstacles
+        obstacle_manager.draw(screen)
+
         # player.update()
 
-        player.update()
+
+
+        ##### updating
+        player.update() 
 
         # Handle player movement
         # print(time.time() - prev_time)
@@ -71,20 +95,19 @@ def game_loop(screen, clock, fps, update_func):
             update_func(player)
             prev_time = time.time()
 
-        
+        # Update other players
+
         # Update obstacles
 
-        #obstacle_manager.update(dt)
+        obstacle_manager.update((player.world_x, player.world_y), (player.x, player.y), SEG_LENGTH)
         
         # Check for collisions
-        # if obstacle_manager.check_collision(player):
-        #     print("Collision detected!")
-        #     running = False
-        #     return
+        if obstacle_manager.check_collision(player):
+            print("Collision detected!")
+            running = False
+            return
 
-        # Draw obstacles
-        #obstacle_manager.draw(screen)
-
+        
 
         # Calculate and display FPS
         fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
