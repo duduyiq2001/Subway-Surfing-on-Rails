@@ -68,13 +68,26 @@ class Player:
         # Or a simple placeholder:
         self.color = (255, 0, 0)  # Red
 
+        # smooth movement
+        self.x_per_frame = []
+
     def move_left(self):
         """
         Move the player to the next lane on the left.
         """
         if self.current_lane > 0:
             self.current_lane -= 1
-            self.x = self.lane_positions[self.current_lane]
+            # self.x = self.lane_positions[self.current_lane]
+            self.x_per_frame = [
+                -5,
+                -10,
+                -15,
+                -20,
+                -20,
+                -15,
+                -10,
+                -5,
+            ]  # maxhight = 10 + 2*delta
 
     def move_right(self):
         """
@@ -82,7 +95,8 @@ class Player:
         """
         if self.current_lane < len(self.lane_positions) - 1:
             self.current_lane += 1
-            self.x = self.lane_positions[self.current_lane]
+            # self.x = self.lane_positions[self.current_lane]
+            self.x_per_frame = [5, 10, 15, 20, 20, 15, 10, 5]  # maxhight = 10 + 2*delta
 
     def jump(self):
         """
@@ -98,6 +112,18 @@ class Player:
         Update the player's position each frame.
         Handles gravity, vertical movement, and ground check.
         """
+
+        # smooth movement
+        if len(self.x_per_frame) > 0:
+            self.x += (
+                0.01
+                * self.x_per_frame[-1]
+                * (self.lane_positions[1] - self.lane_positions[0])
+            )
+            self.x_per_frame.pop()
+        else:
+            self.x_per_frame = [0, 0, 0, 0, 0, 0, 0, 0]
+
         # Apply gravity
         self.velocity_y += self.gravity
 
