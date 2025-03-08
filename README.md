@@ -11,13 +11,37 @@ turning left, right and jump
 ## 2. Project structure
 
 ```bash
-├── hand_gestures 
-├── network
-├── README.md
-├── resources
-├── src
-│   └── main.py
-└── utils
+my_infinite_runner_game/
+├── hand_gestures/
+│   ├── __init__.py
+│   ├── gesture_controller.py
+│   └── gesture_recognizer.py
+├── network/
+│   ├── __init__.py
+│   ├── network_manager.py
+│   └── sync_protocols.py
+├── resources/
+│   ├── images/
+│   │   └── ...
+│   ├── sounds/
+│   │   └── ...
+│   └── fonts/
+│       └── ...
+├── src/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── game_loop.py
+│   ├── states.py
+│   ├── player.py
+│   ├── obstacle.py
+│   ├── map_generator.py
+│   ├── collision.py
+│   └── input_mapping.py
+└── utils/
+    ├── __init__.py
+    ├── config.py
+    ├── constants.py
+    └── logger.py
 ```
 
 ## 1. environment
