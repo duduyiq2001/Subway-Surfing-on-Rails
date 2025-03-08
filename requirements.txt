@@ -6,3 +6,5 @@ pip >=20.3
 
 # Other dependencies
 mediapipe
+opencv-python 
+numpy
