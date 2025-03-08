@@ -6,6 +6,7 @@ import time
 from map_generator import draw_map
 from player import Player
 from obstacle import Obstacle
+from obstacle_manager import ObstacleManager
 # collison
 
 
@@ -32,8 +33,7 @@ def game_loop(screen, clock, fps, update_func):
     prev_time = time.time()
 
     # Initialize obstacles
-    obstacles = []
-    obstacle_spawn_time = 0
+    obstacle_manager = ObstacleManager(player.lane_positions)
 
     # Initialize font
     pygame.font.init()
@@ -70,28 +70,18 @@ def game_loop(screen, clock, fps, update_func):
             update_func(player)
             prev_time = time.time()
 
-        # Obstacle spawning
-        obstacle_spawn_time += dt
-        if obstacle_spawn_time > 1.5:  # Spawn every second
-            # Randomly generate one of the two types of obstacles
-            obstacles.append(Obstacle(track_positions=player.lane_positions))
-            obstacle_spawn_time = 0
-
-        for obstacle in obstacles:
-            obstacle.update(dt)
-
-        for obstacle in obstacles:
-            if obstacle.check_collision(player):
-                print("Collision detected!")
-                running = False
-                return
-
-        # Remove off-screen obstacles
-        obstacles = [ob for ob in obstacles if ob.y < HEIGHT]
+        
+        # Update obstacles
+        obstacle_manager.update(dt)
+        
+        # Check for collisions
+        if obstacle_manager.check_collision(player):
+            print("Collision detected!")
+            running = False
+            return
 
         # Draw obstacles
-        for obstacle in obstacles:
-            obstacle.draw(screen)
+        obstacle_manager.draw(screen)
 
         # Calculate and display FPS
         fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))

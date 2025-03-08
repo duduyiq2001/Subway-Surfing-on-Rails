@@ -6,7 +6,7 @@ class Obstacle:
     Represents an obstacle that moves down the screen.
     """
 
-    def __init__(self, track_positions, width=100, height=30, speed=200):
+    def __init__(self, track_index, track_position, width=100, height=30, speed=200):
         """
         Initializes an obstacle in a random track.
         
@@ -15,9 +15,9 @@ class Obstacle:
         :param height: Height of the obstacle.
         :param speed: Speed at which the obstacle moves downward.
         """
-        self.track_positions = track_positions
-        self.track = random.randint(0, len(track_positions) - 1)  # Choose a random track
-        self.x = track_positions[self.track] - width // 2
+        self.track_index = track_index
+        self.track_position = track_position
+        self.x = track_position[self.track_index] - width // 2
         
         # random choose a type
         self.type = random.choice(["hurdle", "train"])
@@ -29,7 +29,7 @@ class Obstacle:
             self.height = height
         
         self.width = width
-        self.y = -height  # Start above the screen
+        self.y = -height * 2 # Start above the screen
         self.speed = speed  # Speed at which the obstacle moves
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
