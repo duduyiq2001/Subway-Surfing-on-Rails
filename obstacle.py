@@ -29,7 +29,7 @@ class Obstacle:
             self.height = height
         
         self.width = width
-        self.y = -height * 2 # Start above the screen
+        self.y = -self.height# Start above the screen
         self.speed = speed  # Speed at which the obstacle moves
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
@@ -45,6 +45,8 @@ class Obstacle:
         Draws the obstacle as a black rectangle.
         """
         pygame.draw.rect(screen, (0, 0, 0), self.rect)
+        # draw collision box for debug
+        #pygame.draw.rect(screen, (255, 0, 0), self.rect, 2)  # 红色边框
 
     def check_collision(self, player):
         """
