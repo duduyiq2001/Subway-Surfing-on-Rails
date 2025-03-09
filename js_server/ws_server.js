@@ -22,6 +22,7 @@ io.on('connection', (socket) => {
     // Expected data format: { player_id: "player1", x: 100, y: 200 }
     const { player_id, x, y } = data;
     players[player_id] = { x, y };
+    console.log("Player updated:", players);
 
     // Check if the game should start.
     if (!gameStarted) {
@@ -30,10 +31,10 @@ io.on('connection', (socket) => {
         io.emit('game_start', { message: "Game Start", players: players });
         console.log("Game start triggered with players:", players);
       } else {
-        io.emit('update', { players });
+        io.emit('update', { message: "", players: players });
       }
     } else {
-      io.emit('update', { players });
+      io.emit('update', { message: "", players: players });
     }
   });
 
