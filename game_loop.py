@@ -119,8 +119,6 @@ def game_loop(screen, clock, fps, playerid, update_func, pos_update_func=None, c
         # Draw player
         player.draw(screen)
 
-        # Draw other players
-        draw_players(other_players, player,screen)
 
         # Draw obstacles
         obstacle_manager.draw(screen)
@@ -130,6 +128,10 @@ def game_loop(screen, clock, fps, playerid, update_func, pos_update_func=None, c
 
         # Draw coins
         coins_manager.draw(screen, player, HEIGHT)
+
+        # Draw other players
+        draw_players(other_players, player,screen)
+
 
         ##### updating
         player.update()
