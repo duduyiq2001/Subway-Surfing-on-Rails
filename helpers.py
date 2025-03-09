@@ -75,12 +75,13 @@ def draw_players(players, selfid, surface):
 
     for player in players:
         if player != selfid:
+            p = players[player]
             pygame.draw.rect(
                 surface,
                 "red",
                 (
-                    player['x'] - 25,
-                    player['y'] - 25,
+                    p['x'] - 25,
+                    p['y'] - 25,
                     50,
                     50,
                 ),
@@ -91,8 +92,8 @@ def draw_players(players, selfid, surface):
                 surface,
                 (0, 255, 0),
                 (
-                    player['x'] - 25,
-                    player['y'] - 25,
+                    p['x'] - 25,
+                    p['y'] - 25,
                     50,
                     50,
                 ),
