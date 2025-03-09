@@ -103,7 +103,7 @@ class Player:
         
         for i in range(8):
             frame = self.image.subsurface(pygame.Rect(i * SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT))
-            frame = pygame.transform.scale(frame, (SPRITE_WIDTH * 2, SPRITE_HEIGHT * 2))
+            frame = pygame.transform.scale(frame, (SPRITE_WIDTH * 4, SPRITE_HEIGHT * 4))
             self.frames.append(frame)
         
         # Animation
