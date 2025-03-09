@@ -20,7 +20,8 @@ def game_loop(screen, clock, fps, update_func):
     TRACK_WIDTH = (WIDTH - 2 * SIDE_WIDTH) // TRACK_COUNT
     MOVE_COOLDOWN = 0.5
     SEG_LENGTH = 7200
-    GAME_LENGTH = 72000
+    GAME_LENGTH = 30000
+    GAME_SPEED = 10
     # NUM OF objects per type
     OBJ_NUM = 10
     LANE_POS = [SIDE_WIDTH + (i + 0.5) * TRACK_WIDTH for i in range(TRACK_COUNT)]
@@ -34,6 +35,7 @@ def game_loop(screen, clock, fps, update_func):
         x=player_x,
         y=player_y,
         lane_positions=LANE_POS,
+        speed=GAME_SPEED,
     )
     prev_time = time.time()
 
@@ -130,15 +132,23 @@ def game_loop(screen, clock, fps, update_func):
             player.velocity_y = 0
             continue
         else:
-            player.velocity_y = 5
+            player.velocity_y = GAME_SPEED
 
         # running = False
         # return
 
         # Calculate and display FPS
-        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
-        screen.blit(fps_text, (10, 10))
+        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (0, 0, 0))
+        progress_text = font.render(
+            f"Progress: {int(player.world_y / GAME_LENGTH * 100)}%",
+            True,
+            (0, 0, 0),
+        )
 
+        score_text = font.render(f"Score: {player.score}", True, (0, 0, 0))
+        screen.blit(fps_text, (10, 10))
+        screen.blit(progress_text, (10, 30))
+        screen.blit(score_text, (10, 50))
         # Update display
         pygame.display.flip()
 
