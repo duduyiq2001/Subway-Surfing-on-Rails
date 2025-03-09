@@ -37,6 +37,8 @@ SMOOTH1 = [
     0.0,
 ]
 
+SCORE_PER_FRAME = 1
+
 
 class Player:
     """
@@ -55,7 +57,7 @@ class Player:
         current_lane (int): Index of the lane the player is currently in.
     """
 
-    def __init__(self, x, y, width=50, height=50, lane_positions=None):
+    def __init__(self, x, y, width=50, height=50, lane_positions=None, speed=5):
         """
         Initialize the player.
 
@@ -74,7 +76,7 @@ class Player:
 
         # Movement and physics
         self.velocity_x = 0
-        self.velocity_y = 5
+        self.velocity_y = speed
         self.gravity = 0.5  # Gravity for jump logic
         self.jump_strength = (
             -10
@@ -92,6 +94,7 @@ class Player:
 
         # Score
         self.score = 0
+        self.score_per_coin = 100
 
         # For drawing or animations
         self.image = pygame.image.load("resources/image/player.png").convert_alpha()
@@ -168,6 +171,7 @@ class Player:
         # smooth movement
         if len(self.x_per_frame) > 0:
             self.x += self.x_per_frame[-1] * self.x_smooth_dist
+            self.score += SCORE_PER_FRAME
 
             self.world_x = self.x
             self.x_per_frame.pop()
@@ -218,16 +222,17 @@ class Player:
         surface.blit(self.frames[self.current_frame], (self.rect.topleft))
 
         # Using a rectangle placeholder:
-        # pygame.draw.rect(
-        #     surface,
-        #     self.color,
-        #     (
-        #         self.x - self.width / 2,
-        #         self.y - self.height / 2,
-        #         self.width,
-        #         self.height,
-        #     ),
-        # )
+        pygame.draw.rect(
+            surface,
+            (255, 255, 255),
+            (
+                self.x - self.width / 2,
+                self.y - self.height / 2,
+                self.width,
+                self.height,
+            ),
+            1,
+        )
 
         # draw collision box
         # pygame.draw.rect(

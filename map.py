@@ -21,7 +21,7 @@ class Map:
 
     # draw once, update in the game loop
     def draw(self, screen):
-        screen.fill("gray")
+        screen.fill((117, 110, 104))
 
         # Draw the tarck lines
         for i in range(0, TRACK_COUNT):

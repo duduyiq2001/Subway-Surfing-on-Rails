@@ -5,6 +5,7 @@ import time
 import random
 
 # from map_manager import MapManager
+from coins_manager import CoinsManager
 from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
@@ -20,7 +21,8 @@ def game_loop(screen, clock, fps, update_func):
     TRACK_WIDTH = (WIDTH - 2 * SIDE_WIDTH) // TRACK_COUNT
     MOVE_COOLDOWN = 0.5
     SEG_LENGTH = 7200
-    GAME_LENGTH = 72000
+    GAME_LENGTH = 30000
+    GAME_SPEED = 10
     # NUM OF objects per type
     OBJ_NUM = 10
     LANE_POS = [SIDE_WIDTH + (i + 0.5) * TRACK_WIDTH for i in range(TRACK_COUNT)]
@@ -34,6 +36,7 @@ def game_loop(screen, clock, fps, update_func):
         x=player_x,
         y=player_y,
         lane_positions=LANE_POS,
+        speed=GAME_SPEED,
     )
     prev_time = time.time()
 
@@ -58,6 +61,7 @@ def game_loop(screen, clock, fps, update_func):
     print("swdwjqdbwqd")
 
     obstacle_manager = ObstacleManager(LANE_POS, SEG_LENGTH, objs)
+    coins_manager = CoinsManager()
 
     # Initialize font
     pygame.font.init()
@@ -103,6 +107,11 @@ def game_loop(screen, clock, fps, update_func):
         # Draw obstacles
         obstacle_manager.draw(screen)
 
+        coins_manager.generate(LANE_POS, player, HEIGHT)
+
+        # Draw coins
+        coins_manager.draw(screen, player, HEIGHT)
+
         ##### updating
         player.update()
         # map_manager.update(player.velocity_y)
@@ -124,21 +133,33 @@ def game_loop(screen, clock, fps, update_func):
             (player.world_x, player.world_y), (player.x, player.y), SEG_LENGTH
         )
 
+        coins_manager.update(GAME_SPEED, HEIGHT)
+
         # Check for collisions
         if obstacle_manager.check_collision(player):
             print("Collision detected!")
             player.velocity_y = 0
             continue
         else:
-            player.velocity_y = 5
+            player.velocity_y = GAME_SPEED
+
+        coins_manager.check_collision(player)
 
         # running = False
         # return
 
         # Calculate and display FPS
-        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
-        screen.blit(fps_text, (10, 10))
+        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (0, 0, 0))
+        progress_text = font.render(
+            f"Progress: {int(player.world_y / GAME_LENGTH * 100)}%",
+            True,
+            (0, 0, 0),
+        )
 
+        score_text = font.render(f"Score: {player.score}", True, (0, 0, 0))
+        screen.blit(fps_text, (10, 10))
+        screen.blit(progress_text, (10, 30))
+        screen.blit(score_text, (10, 50))
         # Update display
         pygame.display.flip()
 
