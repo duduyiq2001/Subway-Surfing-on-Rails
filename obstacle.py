@@ -33,7 +33,6 @@ class Obstacle:
         self.type = type
         self.height = height
         self.width = width
-
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def update(self,p_world, p_canva, seg_length ):
@@ -50,6 +49,7 @@ class Obstacle:
         """
         if self.y >=0 and self.y <= HEIGHT:
             pygame.draw.rect(screen, (0, 0, 0), self.rect)
+
 
     def check_collision(self, player):
         """

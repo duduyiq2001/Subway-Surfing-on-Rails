@@ -2,8 +2,8 @@
 import pygame
 import sys
 import time
+from map_generator import MapGenerator
 import random
-from map_generator import draw_map
 from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
@@ -52,6 +52,9 @@ def game_loop(screen, clock, fps, update_func):
     # Initialize font
     pygame.font.init()
     font = pygame.font.SysFont(None, 36)
+    
+    # Initialize map
+    map_gen = MapGenerator(screen)
 
     
     while player.world_y <= GAME_LENGTH:
@@ -72,7 +75,7 @@ def game_loop(screen, clock, fps, update_func):
 
         #### rendering
         # Draw map
-        draw_map(screen)
+        map_gen.draw_map(screen)
 
         # Draw player
         player.draw(screen)
