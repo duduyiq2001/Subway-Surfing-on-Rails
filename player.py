@@ -56,8 +56,8 @@ class Player:
         lane_positions (list): Possible x-coordinates or lanes if you want multi-lane movement.
         current_lane (int): Index of the lane the player is currently in.
     """
-
     def __init__(self, x, y, width=50, height=50, lane_positions=None, speed=5):
+
         """
         Initialize the player.
 
@@ -67,6 +67,7 @@ class Player:
         :param height: The height of the player's collision box.
         :param lane_positions: A list of valid x-coordinates or lanes the player can occupy.
         """
+        self.id = id
         self.x = x
         self.y = y
         self.world_x = x

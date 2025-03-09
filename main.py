@@ -10,11 +10,11 @@ import pygame
 import sys
 from game_loop import game_loop
 from hand_gestures.model import run_model_on_cam
-from helpers import create_gesture_update, keyboard_update
 from start_scene import start_screen
+from helpers import create_gesture_update, keyboard_update, get_send_update
 import threading
 from queue import Queue
-
+from network.game_client import get_ws_connection, run_client
 mapping = {"Thumb_Up": "left", "Open_Palm": "right"}
 
 
@@ -23,13 +23,25 @@ def main():
     pygame.init()
     # Initialize Queue
     gesture_queue = Queue(maxsize=1)
+    playerpos_queue = Queue(maxsize=1)
     logfile = "log.txt"
+    # Intializing connections
+    sio = get_ws_connection(playerpos_queue)
+
     # . launch thread for webcam
     threading.Thread(
         target=run_model_on_cam, args=(gesture_queue, logfile), daemon=True
     ).start()
+
+    # launching thread for client handler
+    threading.Thread(
+        target=run_client, args=(sio), daemon=True
+    ).start()
+
     ### creating callback function
     gest_update = create_gesture_update(gesture_queue, mapping)
+    pos_update = get_send_update(sio)
+
 
     # Constants
     WIDTH, HEIGHT = 1280, 720
@@ -47,7 +59,7 @@ def main():
 
     # Game Loop
     try:
-        game_loop(screen, clock, fps, gest_update)
+        game_loop(screen, clock, fps, gest_update,pos_update_func=pos_update,client_queue=playerpos_queue)
     except Exception as e:
         print("Error in the game loop: ", e)
         pygame.quit()

@@ -9,11 +9,15 @@ from coins_manager import CoinsManager
 from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
+
 from map import Map
+# collison
+from helpers import wait_on_start, wait_on_pos, draw_players
 # collison
 
 
-def game_loop(screen, clock, fps, update_func):
+
+def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queue=None):
     # Constants
     WIDTH, HEIGHT = 1280, 720
     TRACK_COUNT = 5
@@ -25,6 +29,8 @@ def game_loop(screen, clock, fps, update_func):
     GAME_SPEED = 10
     # NUM OF objects per type
     OBJ_NUM = 10
+    ### change every time
+    ID = 1
     LANE_POS = [SIDE_WIDTH + (i + 0.5) * TRACK_WIDTH for i in range(TRACK_COUNT)]
 
     # First player
@@ -33,12 +39,15 @@ def game_loop(screen, clock, fps, update_func):
 
     # Initialize player
     player = Player(
+        ID,
         x=player_x,
         y=player_y,
         lane_positions=LANE_POS,
         speed=GAME_SPEED,
     )
     prev_time = time.time()
+    # Initialize other players (pos only)
+    other_players = []
 
     # Initialize obstacles
     objs = []
@@ -66,7 +75,6 @@ def game_loop(screen, clock, fps, update_func):
     # Initialize font
     pygame.font.init()
     font = pygame.font.SysFont(None, 36)
-
     # Initialize map
     # map_manager = MapManager(screen)
     map_pos_y = 0
@@ -80,6 +88,14 @@ def game_loop(screen, clock, fps, update_func):
     static_map_2.blit(static_map, (0, HEIGHT))
 
     screen.blit(static_map_2, (0, -HEIGHT))
+
+
+    ## establish connection witn server
+    if pos_update_func != None and client_queue != None:
+        other_players = wait_on_start(client_queue)
+
+
+    
 
     while player.world_y <= GAME_LENGTH:
         dt = clock.tick(fps) / 1000
@@ -103,9 +119,11 @@ def game_loop(screen, clock, fps, update_func):
         player.draw(screen)
 
         # Draw other players
+        draw_players(other_players,screen)
 
         # Draw obstacles
         obstacle_manager.draw(screen)
+
 
         coins_manager.generate(LANE_POS, player, HEIGHT)
 
@@ -118,6 +136,10 @@ def game_loop(screen, clock, fps, update_func):
         map_pos_y += player.velocity_y
         if map_pos_y > HEIGHT:
             map_pos_y = 0
+
+        ##### updating other players
+        other_players = wait_on_pos(client_queue)
+
 
         # Handle player movement
         # print(time.time() - prev_time)
@@ -145,8 +167,10 @@ def game_loop(screen, clock, fps, update_func):
 
         coins_manager.check_collision(player)
 
-        # running = False
-        # return
+
+        #### updating the server 
+        pos_update_func(player.id, player.world_x, player.world_y)
+
 
         # Calculate and display FPS
         fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (0, 0, 0))
