@@ -53,7 +53,7 @@ def main():
 
     # Game Loop
     try:
-        game_loop(screen, clock, fps, gest_update)
+        game_loop(screen, clock, fps, gest_update, playerid)
     except Exception as e:
         print("Error in the game loop: ", e)
         pygame.quit()

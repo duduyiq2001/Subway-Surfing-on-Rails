@@ -13,7 +13,7 @@ from map import Map
 # collison
 
 
-def game_loop(screen, clock, fps, update_func):
+def game_loop(screen, clock, fps, update_func, playerid):
     # Constants
     WIDTH, HEIGHT = 1280, 720
     TRACK_COUNT = 5
