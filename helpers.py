@@ -61,7 +61,7 @@ def send_one_update(sio, player_id):
     sio.emit('update', {'player_id': player_id, 'x': 0, 'y': 0})
     
 
-def draw_players(players, selfid, surface):
+def draw_players(players, me, surface):
     """
     Draw the player on the given surface.
     If you have a sprite/image, you can blit it. Otherwise, draw a rectangle as a placeholder.
@@ -74,14 +74,15 @@ def draw_players(players, selfid, surface):
     # Using a rectangle placeholder:
 
     for player in players:
-        if player != selfid:
+        if player != me.id:
             p = players[player]
+            canva_y = me.y - (p['y']- me.world_y )
             pygame.draw.rect(
                 surface,
                 "red",
                 (
                     p['x'] - 25,
-                    p['y'] - 25,
+                    canva_y - 25,
                     50,
                     50,
                 ),
@@ -93,7 +94,7 @@ def draw_players(players, selfid, surface):
                 (0, 255, 0),
                 (
                     p['x'] - 25,
-                    p['y'] - 25,
+                    canva_y - 25,
                     50,
                     50,
                 ),

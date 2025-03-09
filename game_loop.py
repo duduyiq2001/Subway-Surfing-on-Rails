@@ -141,7 +141,7 @@ def game_loop(screen, clock, fps, playerid, update_func, pos_update_func=None, c
         ##### updating other players
         if not client_queue.empty():
             other_players = wait_on_pos(client_queue)
-            print("othher players after update are {other_players}")
+            print(f"othher players after update are {other_players}")
 
 
         # Handle player movement
