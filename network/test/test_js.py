@@ -46,7 +46,7 @@ if __name__ == "__main__":
     player_id = args.player_id
     i_y = int(args.initial)
 
-    sio.connect('http://localhost:3000')
+    sio.connect('http://10.60.0.152:3000')
     
     # # Start sending updates in a loop (in the main thread or a separate thread)
     # send_one_update(player_id)
