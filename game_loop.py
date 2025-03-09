@@ -172,7 +172,7 @@ def game_loop(screen, clock, fps, playerid, update_func, pos_update_func=None, c
 
         if pos_update_func != None:
             #### updating the server 
-            pos_update_func(player.id, player.world_y)
+            pos_update_func(player.id,(player.world_x, player.world_y))
 
 
         # Calculate and display FPS
