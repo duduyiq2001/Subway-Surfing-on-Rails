@@ -10,6 +10,7 @@ from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
 from map import Map
+from exit_scene import exit_screen
 # collison
 
 
@@ -170,5 +171,8 @@ def game_loop(screen, clock, fps, update_func, playerid):
         # Cap the frame rate
         clock.tick(fps)
 
+    # Exit screen
+    exit_screen(screen, clock, fps, player.score)
+    
     pygame.quit()
     sys.exit()
