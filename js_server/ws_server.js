@@ -9,13 +9,13 @@ const io = socketIo(server);
 // In-memory store for player positions.
 let players = {};
 let gameStarted = false;
-const NUM_OF_PLAYERS = 3;
+const NUM_OF_PLAYERS = 2;
 
 io.on('connection', (socket) => {
   console.log('A client connected:', socket.id);
 
   // Send a welcome message on connection.
-  socket.emit('message', { message: "Welcome to the game!" });
+  // socket.emit('message', { message: "Welcome to the game!" });
 
   // Listen for player updates.
   socket.on('update', (data) => {
@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
     if (!gameStarted) {
       if (Object.keys(players).length >= NUM_OF_PLAYERS) {
         gameStarted = true;
-        io.emit('game_start', { message: "Game Start", players });
+        io.emit('game_start', { message: "Game Start", players: players });
         console.log("Game start triggered with players:", players);
       } else {
         io.emit('update', { players });
