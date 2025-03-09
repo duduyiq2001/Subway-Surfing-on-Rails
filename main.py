@@ -13,6 +13,7 @@ from hand_gestures.model import run_model_on_cam
 from helpers import create_gesture_update, keyboard_update
 import threading
 from queue import Queue
+from play_music import musci_play
 
 mapping = {"Thumb_Up": "left", "Open_Palm": "right"}
 
@@ -40,6 +41,11 @@ def main():
     # Clock
     clock = pygame.time.Clock()
     fps = 120
+
+    # Add music
+    threading.Thread(
+        target=musci_play
+    ).start()
 
     # Game Loop
     try:
