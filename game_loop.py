@@ -157,9 +157,13 @@ def game_loop(screen, clock, fps, update_func, playerid):
         )
 
         score_text = font.render(f"Score: {player.score}", True, (0, 0, 0))
+        player_id_text = font.render(f"Player ID: {playerid}", True, (0, 0, 0))
+
         screen.blit(fps_text, (10, 10))
         screen.blit(progress_text, (10, 30))
         screen.blit(score_text, (10, 50))
+        screen.blit(player_id_text, (10, 70))
+        
         # Update display
         pygame.display.flip()
 
