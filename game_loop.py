@@ -17,7 +17,7 @@ from helpers import wait_on_start, wait_on_pos, draw_players
 
 
 
-def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queue=None):
+def game_loop(screen, clock, fps, playerid, update_func, pos_update_func=None, client_queue=None):
     # Constants
     WIDTH, HEIGHT = 1280, 720
     TRACK_COUNT = 5
@@ -39,7 +39,7 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
 
     # Initialize player
     player = Player(
-        ID,
+        id=playerid,
         x=player_x,
         y=player_y,
         lane_positions=LANE_POS,
@@ -93,6 +93,7 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
     ## establish connection witn server
     if pos_update_func != None and client_queue != None:
         other_players = wait_on_start(client_queue)
+        print(f'other players are :{other_players}')
 
 
     
@@ -118,8 +119,6 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
         # Draw player
         player.draw(screen)
 
-        # Draw other players
-        draw_players(other_players,screen)
 
         # Draw obstacles
         obstacle_manager.draw(screen)
@@ -130,6 +129,10 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
         # Draw coins
         coins_manager.draw(screen, player, HEIGHT)
 
+        # Draw other players
+        draw_players(other_players, player,screen)
+
+
         ##### updating
         player.update()
         # map_manager.update(player.velocity_y)
@@ -138,7 +141,9 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
             map_pos_y = 0
 
         ##### updating other players
-        other_players = wait_on_pos(client_queue)
+        if not client_queue.empty():
+            other_players = wait_on_pos(client_queue)
+            print(f"othher players after update are {other_players}")
 
 
         # Handle player movement
@@ -147,7 +152,7 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
             update_func(player)
             prev_time = time.time()
 
-        # Update other players
+
 
         # Update obstacles
 
@@ -159,7 +164,7 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
 
         # Check for collisions
         if obstacle_manager.check_collision(player):
-            print("Collision detected!")
+            #print("Collision detected!")
             player.velocity_y = 0
             continue
         else:
@@ -167,9 +172,9 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
 
         coins_manager.check_collision(player)
 
-
-        #### updating the server 
-        pos_update_func(player.id, player.world_x, player.world_y)
+        if pos_update_func != None:
+            #### updating the server 
+            pos_update_func(player.id,(player.world_x, player.world_y))
 
 
         # Calculate and display FPS

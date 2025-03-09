@@ -41,7 +41,7 @@ class CoinsManager:
         self.coins.add(new_coin)
 
     def update(self, dt, HEIGHT):
-        print(self.coins)
+        # print(self.coins)
         for coin in self.coins:
             coin.update(dt)
 

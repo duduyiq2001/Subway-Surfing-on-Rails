@@ -10,7 +10,7 @@ from socketio.exceptions import TimeoutError
 
 def get_ws_connection(queue):
     sio = socketio.Client()
-    sio.connect('http://localhost:3000')
+    sio.connect('http://10.60.0.152:3000')
     @sio.event
     def connect():
         print("Connected to Socket.IO server")
@@ -27,10 +27,12 @@ def get_ws_connection(queue):
     @sio.on('update')
     def on_update(data):
         print("Received update:", data)
+        queue.put(data)
 
     @sio.on('game_start')
     def on_game_start(data):
         print("Game started:", data)
+        queue.put(data)
 
     
     return sio
