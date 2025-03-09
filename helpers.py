@@ -54,7 +54,7 @@ def wait_on_start(queue):
 ### fetching on pos of other players
 def wait_on_pos(queue):
     msg = queue.get_nowait()
-    return msg
+    return msg['players']
 
 #### ping the server
 def send_one_update(sio, player_id):
