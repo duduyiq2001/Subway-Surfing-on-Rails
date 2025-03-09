@@ -14,6 +14,7 @@ from helpers import create_gesture_update, keyboard_update
 from start_scene import start_screen
 import threading
 from queue import Queue
+from play_music import musci_play
 
 mapping = {"Thumb_Up": "left", "Open_Palm": "right"}
 
@@ -44,6 +45,11 @@ def main():
     
     # Start Scene
     playerid, state = start_screen(screen, fps, clock)
+
+    # Add music
+    threading.Thread(
+        target=musci_play
+    ).start()
 
     # Game Loop
     try:
