@@ -120,7 +120,7 @@ def game_loop(screen, clock, fps, playerid, update_func, pos_update_func=None, c
         player.draw(screen)
 
         # Draw other players
-        draw_players(other_players, player.id,screen)
+        draw_players(other_players, player,screen)
 
         # Draw obstacles
         obstacle_manager.draw(screen)
