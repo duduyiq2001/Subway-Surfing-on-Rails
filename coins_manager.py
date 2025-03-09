@@ -63,5 +63,5 @@ class CoinsManager:
 
     def draw(self, screen, player, HEIGHT):
         for coin in self.coins:
-            pygame.draw.rect(screen, (255, 0, 0), coin.rect, 2)
+            # pygame.draw.rect(screen, (255, 0, 0), coin.rect, 2)
             coin.draw(screen)

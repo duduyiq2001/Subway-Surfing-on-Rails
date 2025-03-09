@@ -222,17 +222,17 @@ class Player:
         surface.blit(self.frames[self.current_frame], (self.rect.topleft))
 
         # Using a rectangle placeholder:
-        pygame.draw.rect(
-            surface,
-            (255, 255, 255),
-            (
-                self.x - self.width / 2,
-                self.y - self.height / 2,
-                self.width,
-                self.height,
-            ),
-            1,
-        )
+        # pygame.draw.rect(
+        #     surface,
+        #     (255, 255, 255),
+        #     (
+        #         self.x - self.width / 2,
+        #         self.y - self.height / 2,
+        #         self.width,
+        #         self.height,
+        #     ),
+        #     1,
+        # )
 
         # draw collision box
         # pygame.draw.rect(
