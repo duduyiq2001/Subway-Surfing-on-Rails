@@ -6,33 +6,19 @@ class ObstacleManager:
     Manages the spawning and updating of obstacles.
     """
     
-    def __init__(self, track_positions):
+    def __init__(self, track_positions, seg_length, objs):
         self.track_positions = track_positions
         self.tracks = len(track_positions)
-        self .obstacles = []
-        self.spawn_timers = [random.uniform(1, 5) for _ in range(self.tracks)]
+        self.obstacles = objs
+        self.seg_length = seg_length
+
         
-    def update(self, dt):
+    def update(self, p_world, pcanva, seg_length):
         """
         Updates all obstacles and spawns new ones if necessary.
         """
         for obstacle in self.obstacles:
-            obstacle.update(dt)
-        
-        self.obstacles = [obstacle for obstacle in self.obstacles if obstacle.y < 720]
-
-        # Shuffle track order to avoid bias
-        track_indices = list(range(self.tracks))
-        random.shuffle(track_indices)
-        
-        for i in track_indices:
-            self.spawn_timers[i] -= dt
-            if self.spawn_timers[i] <= 0:
-                if self._all_tracks_blocked():
-                    self.spawn_timers[i] = random.uniform(1, 5)
-                    continue
-                self.obstacles.append(Obstacle(i, self.track_positions))
-                self.spawn_timers[i] = random.uniform(1, 5)
+            obstacle.update(p_world, pcanva,seg_length)
                     
     def draw(self, screen):
         """
