@@ -34,7 +34,7 @@ def keyboard_update(player):
 def get_send_update(ws):
     def send_update(id,pos):
         try:
-            ws.emit('update', {'player_id':id, 'x':pos[0], 'y':pos[y]})
+            ws.emit('update', {'player_id':id, 'x':pos[0], 'y':pos[1]})
         except Exception:
             print(f'got error')
     return send_update

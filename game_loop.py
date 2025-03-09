@@ -162,7 +162,7 @@ def game_loop(screen, clock, fps, playerid, update_func, pos_update_func=None, c
 
         # Check for collisions
         if obstacle_manager.check_collision(player):
-            print("Collision detected!")
+            #print("Collision detected!")
             player.velocity_y = 0
             continue
         else:
