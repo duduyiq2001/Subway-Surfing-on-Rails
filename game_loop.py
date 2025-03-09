@@ -3,10 +3,15 @@ import pygame
 import sys
 import time
 import random
-from map_generator import draw_map
+
+# from map_manager import MapManager
+from coins_manager import CoinsManager
 from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
+
+from map import Map
+# collison
 from helpers import wait_on_start, wait_on_pos, draw_players
 # collison
 
@@ -20,7 +25,8 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
     TRACK_WIDTH = (WIDTH - 2 * SIDE_WIDTH) // TRACK_COUNT
     MOVE_COOLDOWN = 0.5
     SEG_LENGTH = 7200
-    GAME_LENGTH = 72000
+    GAME_LENGTH = 30000
+    GAME_SPEED = 10
     # NUM OF objects per type
     OBJ_NUM = 10
     ### change every time
@@ -36,8 +42,8 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
         ID,
         x=player_x,
         y=player_y,
-        lane_positions=
-            LANE_POS
+        lane_positions=LANE_POS,
+        speed=GAME_SPEED,
     )
     prev_time = time.time()
     # Initialize other players (pos only)
@@ -45,19 +51,44 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
 
     # Initialize obstacles
     objs = []
-    
-    interval = SEG_LENGTH/OBJ_NUM
+
+    interval = SEG_LENGTH / OBJ_NUM
     # 90 + i*5, 25 + i
     for i in range(OBJ_NUM):
-        objs.append(Obstacle(i%TRACK_COUNT, i*interval, LANE_POS, "hurdle",SEG_LENGTH, 90 + i*5, 80 + i*5))
+        objs.append(
+            Obstacle(
+                i % TRACK_COUNT,
+                i * interval,
+                LANE_POS,
+                "hurdle",
+                SEG_LENGTH,
+                90 + i * 5,
+                80 + i * 5,
+            )
+        )
 
     print("swdwjqdbwqd")
 
-    obstacle_manager = ObstacleManager(LANE_POS, SEG_LENGTH,objs)
+    obstacle_manager = ObstacleManager(LANE_POS, SEG_LENGTH, objs)
+    coins_manager = CoinsManager()
 
     # Initialize font
     pygame.font.init()
     font = pygame.font.SysFont(None, 36)
+    # Initialize map
+    # map_manager = MapManager(screen)
+    map_pos_y = 0
+    static_map = pygame.surface.Surface((WIDTH, HEIGHT))
+    map = Map(screen=static_map, pos_y=0)
+    # draw everything in the background here
+    map.draw(static_map)
+
+    static_map_2 = pygame.surface.Surface((WIDTH, HEIGHT * 2))
+    static_map_2.blit(static_map, (0, 0))
+    static_map_2.blit(static_map, (0, HEIGHT))
+
+    screen.blit(static_map_2, (0, -HEIGHT))
+
 
     ## establish connection witn server
     if pos_update_func != None and client_queue != None:
@@ -65,6 +96,7 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
 
 
     
+
     while player.world_y <= GAME_LENGTH:
         dt = clock.tick(fps) / 1000
 
@@ -80,11 +112,9 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
                 elif event.key == pygame.K_d:
                     player.move_right()
 
-
         #### rendering
         # Draw map
-        draw_map(screen)
-
+        screen.blit(static_map_2, (0, -HEIGHT + map_pos_y))
         # Draw player
         player.draw(screen)
 
@@ -94,10 +124,22 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
         # Draw obstacles
         obstacle_manager.draw(screen)
 
+
+        coins_manager.generate(LANE_POS, player, HEIGHT)
+
+        # Draw coins
+        coins_manager.draw(screen, player, HEIGHT)
+
         ##### updating
-        player.update() 
+        player.update()
+        # map_manager.update(player.velocity_y)
+        map_pos_y += player.velocity_y
+        if map_pos_y > HEIGHT:
+            map_pos_y = 0
+
         ##### updating other players
         other_players = wait_on_pos(client_queue)
+
 
         # Handle player movement
         # print(time.time() - prev_time)
@@ -109,21 +151,39 @@ def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queu
 
         # Update obstacles
 
-        obstacle_manager.update((player.world_x, player.world_y), (player.x, player.y), SEG_LENGTH)
-        
+        obstacle_manager.update(
+            (player.world_x, player.world_y), (player.x, player.y), SEG_LENGTH
+        )
+
+        coins_manager.update(GAME_SPEED, HEIGHT)
+
         # Check for collisions
         if obstacle_manager.check_collision(player):
             print("Collision detected!")
-            running = False
-            return
+            player.velocity_y = 0
+            continue
+        else:
+            player.velocity_y = GAME_SPEED
+
+        coins_manager.check_collision(player)
+
 
         #### updating the server 
         pos_update_func(player.id, player.world_x, player.world_y)
 
-        # Calculate and display FPS
-        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
-        screen.blit(fps_text, (10, 10))
 
+        # Calculate and display FPS
+        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (0, 0, 0))
+        progress_text = font.render(
+            f"Progress: {int(player.world_y / GAME_LENGTH * 100)}%",
+            True,
+            (0, 0, 0),
+        )
+
+        score_text = font.render(f"Score: {player.score}", True, (0, 0, 0))
+        screen.blit(fps_text, (10, 10))
+        screen.blit(progress_text, (10, 30))
+        screen.blit(score_text, (10, 50))
         # Update display
         pygame.display.flip()
 

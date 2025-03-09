@@ -10,6 +10,7 @@ import pygame
 import sys
 from game_loop import game_loop
 from hand_gestures.model import run_model_on_cam
+from start_scene import start_screen
 from helpers import create_gesture_update, keyboard_update, get_send_update
 import threading
 from queue import Queue
@@ -52,6 +53,9 @@ def main():
     # Clock
     clock = pygame.time.Clock()
     fps = 120
+    
+    # Start Scene
+    playerid, state = start_screen(screen, fps, clock)
 
     # Game Loop
     try:

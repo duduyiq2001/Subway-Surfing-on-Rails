@@ -37,6 +37,8 @@ SMOOTH1 = [
     0.0,
 ]
 
+SCORE_PER_FRAME = 1
+
 
 class Player:
     """
@@ -54,8 +56,8 @@ class Player:
         lane_positions (list): Possible x-coordinates or lanes if you want multi-lane movement.
         current_lane (int): Index of the lane the player is currently in.
     """
+    def __init__(self, x, y, width=50, height=50, lane_positions=None, speed=5):
 
-    def __init__(self,id, x, y, width=50, height=50, lane_positions=None):
         """
         Initialize the player.
 
@@ -75,7 +77,7 @@ class Player:
 
         # Movement and physics
         self.velocity_x = 0
-        self.velocity_y = 5
+        self.velocity_y = speed
         self.gravity = 0.5  # Gravity for jump logic
         self.jump_strength = (
             -10
@@ -93,15 +95,42 @@ class Player:
 
         # Score
         self.score = 0
+        self.score_per_coin = 100
 
         # For drawing or animations
-        # self.image = pygame.image.load("path/to/player_sprite.png").convert_alpha()
+        self.image = pygame.image.load("resources/image/player.png").convert_alpha()
+
+        # Frame
+        self.frames = []
+        SPRITE_WIDTH = self.image.get_width() // 8
+        SPRITE_HEIGHT = self.image.get_height()
+
+        for i in range(8):
+            frame = self.image.subsurface(
+                pygame.Rect(i * SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT)
+            )
+            frame = pygame.transform.scale(frame, (SPRITE_WIDTH * 4, SPRITE_HEIGHT * 4))
+            self.frames.append(frame)
+
+        # Animation
+        self.current_frame = 0
+        self.animation_speed = 5
+        self.frame_counter = 0
+
+        self.rect = self.frames[0].get_rect(center=(self.x, self.y))
+
         # Or a simple placeholder:
-        self.color = (255, 0, 0)  # Red
+        # self.color = (255, 0, 0)  # Red
 
         # smooth movement
         self.x_per_frame = []
         self.x_smooth_dist = 0
+
+    def update_animation(self):
+        self.frame_counter += 1
+        if self.frame_counter >= self.animation_speed:
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
+            self.frame_counter = 0
 
     def move_left(self):
         """
@@ -125,7 +154,6 @@ class Player:
             self.x_per_frame = SMOOTH1.copy()
             self.x_smooth_dist = self.lane_positions[self.current_lane] - self.x
 
-
     # def jump(self):
     #     """
     #     Make the player jump.
@@ -144,15 +172,19 @@ class Player:
         # smooth movement
         if len(self.x_per_frame) > 0:
             self.x += self.x_per_frame[-1] * self.x_smooth_dist
+            self.score += SCORE_PER_FRAME
 
             self.world_x = self.x
             self.x_per_frame.pop()
         else:
             self.x_per_frame = [0, 0, 0, 0, 0, 0, 0, 0]
 
+        self.rect.center = (self.x, self.y)
+
         # Update y-position
+
         self.world_y += self.velocity_y
-        
+
         # # Check if we've hit the 'ground'.
         # # For a 2D runner, you might have a fixed ground level (e.g., y=500).
         # # Adjust based on your game window size.
@@ -160,7 +192,7 @@ class Player:
         # if self.y + self.height > ground_level:
         #     self.y = ground_level - self.height
         #     self.velocity_y = 0
-        #     self.on_ground = True
+        #     self.on_ground = True=
 
     def increase_score(self, amount=1):
         """
@@ -187,24 +219,13 @@ class Player:
         :param surface: The pygame surface to draw on.
         """
         # If you have an image:
-        # surface.blit(self.image, (self.x, self.y))
+        self.update_animation()
+        surface.blit(self.frames[self.current_frame], (self.rect.topleft))
 
         # Using a rectangle placeholder:
         pygame.draw.rect(
             surface,
-            self.color,
-            (
-                self.x - self.width / 2,
-                self.y - self.height / 2,
-                self.width,
-                self.height,
-            ),
-        )
-
-        # draw collision box
-        pygame.draw.rect(
-            surface,
-            (0, 255, 0),
+            (255, 255, 255),
             (
                 self.x - self.width / 2,
                 self.y - self.height / 2,
@@ -213,3 +234,16 @@ class Player:
             ),
             1,
         )
+
+        # draw collision box
+        # pygame.draw.rect(
+        #     surface,
+        #     (0, 255, 0),
+        #     (
+        #         self.x - self.width / 2,
+        #         self.y - self.height / 2,
+        #         self.width,
+        #         self.height,
+        #     ),
+        #     1,
+        # )
