@@ -134,7 +134,7 @@ def game_loop(screen, clock, fps, update_func, playerid):
             (player.world_x, player.world_y), (player.x, player.y), SEG_LENGTH
         )
 
-        coins_manager.update(GAME_SPEED, HEIGHT)
+        coins_manager.update(player.velocity_y, HEIGHT)
 
         # Check for collisions
         if obstacle_manager.check_collision(player):

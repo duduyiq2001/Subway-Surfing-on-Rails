@@ -10,7 +10,7 @@ class CoinsManager:
         self.coins_pic = pygame.image.load("./resources/image/coin.png")
         self.coins_pic = pygame.transform.scale(
             self.coins_pic,
-            (self.coins_pic.get_width() // 2, self.coins_pic.get_height() // 2),
+            (self.coins_pic.get_width() // 4, self.coins_pic.get_height() // 4),
         )
 
     def generate(self, lane_pos, obstacle_manager, HEIGHT):
