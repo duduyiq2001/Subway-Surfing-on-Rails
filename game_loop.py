@@ -5,6 +5,7 @@ import time
 import random
 
 # from map_manager import MapManager
+from coins_manager import CoinsManager
 from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
@@ -60,6 +61,7 @@ def game_loop(screen, clock, fps, update_func):
     print("swdwjqdbwqd")
 
     obstacle_manager = ObstacleManager(LANE_POS, SEG_LENGTH, objs)
+    coins_manager = CoinsManager()
 
     # Initialize font
     pygame.font.init()
@@ -105,6 +107,11 @@ def game_loop(screen, clock, fps, update_func):
         # Draw obstacles
         obstacle_manager.draw(screen)
 
+        coins_manager.generate(LANE_POS, player, HEIGHT)
+
+        # Draw coins
+        coins_manager.draw(screen, player, HEIGHT)
+
         ##### updating
         player.update()
         # map_manager.update(player.velocity_y)
@@ -126,6 +133,8 @@ def game_loop(screen, clock, fps, update_func):
             (player.world_x, player.world_y), (player.x, player.y), SEG_LENGTH
         )
 
+        coins_manager.update(GAME_SPEED, HEIGHT)
+
         # Check for collisions
         if obstacle_manager.check_collision(player):
             print("Collision detected!")
@@ -133,6 +142,8 @@ def game_loop(screen, clock, fps, update_func):
             continue
         else:
             player.velocity_y = GAME_SPEED
+
+        coins_manager.check_collision(player)
 
         # running = False
         # return

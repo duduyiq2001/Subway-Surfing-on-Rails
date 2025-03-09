@@ -37,7 +37,7 @@ SMOOTH1 = [
     0.0,
 ]
 
-SCORE_PER_FRAME = 3
+SCORE_PER_FRAME = 1
 
 
 class Player:
@@ -94,6 +94,7 @@ class Player:
 
         # Score
         self.score = 0
+        self.score_per_coin = 100
 
         # For drawing or animations
         self.image = pygame.image.load("resources/image/player.png").convert_alpha()
