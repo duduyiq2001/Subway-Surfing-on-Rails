@@ -95,27 +95,28 @@ class Player:
 
         # For drawing or animations
         self.image = pygame.image.load("resources/image/player.png").convert_alpha()
-        
+
         # Frame
         self.frames = []
         SPRITE_WIDTH = self.image.get_width() // 8
         SPRITE_HEIGHT = self.image.get_height()
-        
+
         for i in range(8):
-            frame = self.image.subsurface(pygame.Rect(i * SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT))
+            frame = self.image.subsurface(
+                pygame.Rect(i * SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT)
+            )
             frame = pygame.transform.scale(frame, (SPRITE_WIDTH * 4, SPRITE_HEIGHT * 4))
             self.frames.append(frame)
-        
+
         # Animation
         self.current_frame = 0
         self.animation_speed = 5
         self.frame_counter = 0
-        
-        self.rect = self.frames[0].get_rect(center = (self.x, self.y))
-        
-        
+
+        self.rect = self.frames[0].get_rect(center=(self.x, self.y))
+
         # Or a simple placeholder:
-        #self.color = (255, 0, 0)  # Red
+        # self.color = (255, 0, 0)  # Red
 
         # smooth movement
         self.x_per_frame = []
@@ -126,7 +127,7 @@ class Player:
         if self.frame_counter >= self.animation_speed:
             self.current_frame = (self.current_frame + 1) % len(self.frames)
             self.frame_counter = 0
-    
+
     def move_left(self):
         """
         Move the player to the next lane on the left.
@@ -148,7 +149,6 @@ class Player:
             # self.x = self.lane_positions[self.current_lane]
             self.x_per_frame = SMOOTH1.copy()
             self.x_smooth_dist = self.lane_positions[self.current_lane] - self.x
-
 
     # def jump(self):
     #     """
@@ -173,14 +173,13 @@ class Player:
             self.x_per_frame.pop()
         else:
             self.x_per_frame = [0, 0, 0, 0, 0, 0, 0, 0]
-            
 
         self.rect.center = (self.x, self.y)
 
         # Update y-position
 
         self.world_y += self.velocity_y
-        
+
         # # Check if we've hit the 'ground'.
         # # For a 2D runner, you might have a fixed ground level (e.g., y=500).
         # # Adjust based on your game window size.

@@ -2,13 +2,14 @@
 import pygame
 import sys
 import time
-from map_generator import MapGenerator
 import random
+
+# from map_manager import MapManager
 from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
+from map import Map
 # collison
-
 
 
 def game_loop(screen, clock, fps, update_func):
@@ -32,31 +33,50 @@ def game_loop(screen, clock, fps, update_func):
     player = Player(
         x=player_x,
         y=player_y,
-        lane_positions=
-            LANE_POS
+        lane_positions=LANE_POS,
     )
     prev_time = time.time()
 
     # Initialize obstacles
     objs = []
-    
-    interval = SEG_LENGTH/OBJ_NUM
+
+    interval = SEG_LENGTH / OBJ_NUM
     # 90 + i*5, 25 + i
     for i in range(OBJ_NUM):
-        objs.append(Obstacle(i%TRACK_COUNT, i*interval, LANE_POS, "hurdle",SEG_LENGTH, 90 + i*5, 80 + i*5))
+        objs.append(
+            Obstacle(
+                i % TRACK_COUNT,
+                i * interval,
+                LANE_POS,
+                "hurdle",
+                SEG_LENGTH,
+                90 + i * 5,
+                80 + i * 5,
+            )
+        )
 
     print("swdwjqdbwqd")
 
-    obstacle_manager = ObstacleManager(LANE_POS, SEG_LENGTH,objs)
+    obstacle_manager = ObstacleManager(LANE_POS, SEG_LENGTH, objs)
 
     # Initialize font
     pygame.font.init()
     font = pygame.font.SysFont(None, 36)
-    
-    # Initialize map
-    map_gen = MapGenerator(screen)
 
-    
+    # Initialize map
+    # map_manager = MapManager(screen)
+    map_pos_y = 0
+    static_map = pygame.surface.Surface((WIDTH, HEIGHT))
+    map = Map(screen=static_map, pos_y=0)
+    # draw everything in the background here
+    map.draw(static_map)
+
+    static_map_2 = pygame.surface.Surface((WIDTH, HEIGHT * 2))
+    static_map_2.blit(static_map, (0, 0))
+    static_map_2.blit(static_map, (0, HEIGHT))
+
+    screen.blit(static_map_2, (0, -HEIGHT))
+
     while player.world_y <= GAME_LENGTH:
         dt = clock.tick(fps) / 1000
 
@@ -72,11 +92,9 @@ def game_loop(screen, clock, fps, update_func):
                 elif event.key == pygame.K_d:
                     player.move_right()
 
-
         #### rendering
         # Draw map
-        map_gen.draw_map(screen)
-
+        screen.blit(static_map_2, (0, -HEIGHT + map_pos_y))
         # Draw player
         player.draw(screen)
 
@@ -85,12 +103,12 @@ def game_loop(screen, clock, fps, update_func):
         # Draw obstacles
         obstacle_manager.draw(screen)
 
-        # player.update()
-
-
-
         ##### updating
-        player.update() 
+        player.update()
+        # map_manager.update(player.velocity_y)
+        map_pos_y += player.velocity_y
+        if map_pos_y > HEIGHT:
+            map_pos_y = 0
 
         # Handle player movement
         # print(time.time() - prev_time)
@@ -102,15 +120,15 @@ def game_loop(screen, clock, fps, update_func):
 
         # Update obstacles
 
-        obstacle_manager.update((player.world_x, player.world_y), (player.x, player.y), SEG_LENGTH)
-        
+        obstacle_manager.update(
+            (player.world_x, player.world_y), (player.x, player.y), SEG_LENGTH
+        )
+
         # Check for collisions
         if obstacle_manager.check_collision(player):
             print("Collision detected!")
             running = False
             return
-
-        
 
         # Calculate and display FPS
         fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
