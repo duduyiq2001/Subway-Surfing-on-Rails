@@ -127,8 +127,13 @@ def game_loop(screen, clock, fps, update_func):
         # Check for collisions
         if obstacle_manager.check_collision(player):
             print("Collision detected!")
-            running = False
-            return
+            player.velocity_y = 0
+            continue
+        else:
+            player.velocity_y = 5
+
+        # running = False
+        # return
 
         # Calculate and display FPS
         fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
