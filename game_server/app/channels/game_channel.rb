@@ -1,8 +1,9 @@
 class GameChannel < ApplicationCable::Channel
   # Use a class variable to store player positions.
   # For production use, consider a persistent store like Redis.
+  NUM_OF_PLAYERS = 3
   @@players = {}
-
+  @@game_started = false
   def subscribed
     stream_from "game_channel"
     # Optionally notify the client that it has subscribed successfully.
@@ -23,13 +24,25 @@ class GameChannel < ApplicationCable::Channel
     x = data["x"]
     y = data["y"]
 
-    # Update the player's position in the shared hash.
+    # Update or add the player's position.
     @@players[player_id] = { x: x, y: y }
 
-    # Option 1: Immediately broadcast the full players hash to all subscribers.
-    ActionCable.server.broadcast("game_channel", players: @@players)
-
-    # Option 2: Alternatively, you could broadcast on a fixed interval using a scheduled task.
+    # If we haven't started the game yet and the number of players reaches the constant, broadcast a game start message.
+    unless @@game_started
+      if @@players.keys.size >= NUM_OF_PLAYERS
+        
+        ActionCable.server.broadcast("game_channel", message: "Game Start", players: @@players)
+        # Log when the game start gets triggered.
+        Rails.logger.info "Game start triggered with players: #{@@players.inspect}"
+        @@game_started = true
+      else
+        # Still waiting for all players.
+        ActionCable.server.broadcast("game_channel", players: @@players)
+      end
+    else
+      # Game has started; broadcast updated positions.
+      ActionCable.server.broadcast("game_channel", players: @@players)
+    end
   end
 end
 

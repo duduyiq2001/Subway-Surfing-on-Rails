@@ -28,3 +28,69 @@ def keyboard_update(player):
         player.move_left()
     if keys[pygame.K_d]:
         player.move_right()
+
+
+## send one position update to socket
+def get_send_update(ws):
+    def send_update(id,pos):
+        try:
+            ws.emit('update', {'player_id':id, 'x':pos[0], 'y':pos[y]})
+        except Exception:
+            print(f'got error')
+    return send_update
+
+
+### block is enabled and timeout = None queue
+def wait_on_start(queue):
+    msg = ''
+    while(msg != 'Game Start'):
+        msg = queue.get()['message']
+    return msg
+
+### fetching on pos of other players
+def wait_on_pos(queue):
+    msg = queue.get_nowait()['players']
+    return msg
+
+
+def draw_players(players, surface):
+    """
+    Draw the player on the given surface.
+    If you have a sprite/image, you can blit it. Otherwise, draw a rectangle as a placeholder.
+
+    :param surface: The pygame surface to draw on.
+    """
+    # If you have an image:
+    # surface.blit(self.image, (self.x, self.y))
+
+    # Using a rectangle placeholder:
+    for player in players:
+        pygame.draw.rect(
+            surface,
+            "red",
+            (
+                player['x'] - 25,
+                player['y'] - 25,
+                50,
+                50,
+            ),
+        )
+
+        # draw collision box
+        pygame.draw.rect(
+            surface,
+            (0, 255, 0),
+            (
+                player['x'] - 25,
+                player['y'] - 25,
+                50,
+                50,
+            ),
+            1,
+        )
+
+
+
+
+
+

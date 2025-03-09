@@ -7,11 +7,12 @@ from map_generator import draw_map
 from player import Player
 from obstacle import Obstacle
 from obstacle_manager import ObstacleManager
+from helpers import wait_on_start, wait_on_pos, draw_players
 # collison
 
 
 
-def game_loop(screen, clock, fps, update_func):
+def game_loop(screen, clock, fps, update_func, pos_update_func=None, client_queue=None):
     # Constants
     WIDTH, HEIGHT = 1280, 720
     TRACK_COUNT = 5
@@ -22,6 +23,8 @@ def game_loop(screen, clock, fps, update_func):
     GAME_LENGTH = 72000
     # NUM OF objects per type
     OBJ_NUM = 10
+    ### change every time
+    ID = 1
     LANE_POS = [SIDE_WIDTH + (i + 0.5) * TRACK_WIDTH for i in range(TRACK_COUNT)]
 
     # First player
@@ -30,12 +33,15 @@ def game_loop(screen, clock, fps, update_func):
 
     # Initialize player
     player = Player(
+        ID,
         x=player_x,
         y=player_y,
         lane_positions=
             LANE_POS
     )
     prev_time = time.time()
+    # Initialize other players (pos only)
+    other_players = []
 
     # Initialize obstacles
     objs = []
@@ -52,6 +58,11 @@ def game_loop(screen, clock, fps, update_func):
     # Initialize font
     pygame.font.init()
     font = pygame.font.SysFont(None, 36)
+
+    ## establish connection witn server
+    if pos_update_func != None and client_queue != None:
+        other_players = wait_on_start(client_queue)
+
 
     
     while player.world_y <= GAME_LENGTH:
@@ -78,16 +89,15 @@ def game_loop(screen, clock, fps, update_func):
         player.draw(screen)
 
         # Draw other players
+        draw_players(other_players,screen)
 
         # Draw obstacles
         obstacle_manager.draw(screen)
 
-        # player.update()
-
-
-
         ##### updating
         player.update() 
+        ##### updating other players
+        other_players = wait_on_pos(client_queue)
 
         # Handle player movement
         # print(time.time() - prev_time)
@@ -107,7 +117,8 @@ def game_loop(screen, clock, fps, update_func):
             running = False
             return
 
-        
+        #### updating the server 
+        pos_update_func(player.id, player.world_x, player.world_y)
 
         # Calculate and display FPS
         fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, (255, 255, 255))
